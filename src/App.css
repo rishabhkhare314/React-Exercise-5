@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+.ag-pivot-off .ag-header-group-cell{
+  font-size: 500px;
+  color: red;
+}
+
+.ag-pivot-on .ag-header-group-cell{
+  font-size: 205px;
+  color: green;
+}
+.grid-cell-centered {
+  text-align: center;
+}
+.ag-header-cell-text{
+  text-align: center; 
+  margin-left: 35%;
+
+}
+.ag-row-hover {
+  background-color: #dfdfff !important;
+}
+
+.ag-column-hover {
+  background-color: #dfffdf;
+}
+/* #root{
+  background-color:black;
+} */
+.fa{
+  font-size: 24px;
+  padding-left: 20px;
+}
