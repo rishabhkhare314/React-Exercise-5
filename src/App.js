@@ -4,7 +4,10 @@ import "./App.css";
 import Grid from "./components/Grid";
 import Test from "./components/Test";
 import Style from "./components/Style";
+import '@elastic/eui/dist/eui_theme_light.css'
+import PopOver from "./components/PopOver";
 
+import Practice from "./components/Practice";
 function App() {
   return (
     <div className="App">
@@ -13,6 +16,10 @@ function App() {
       {/* </FontContext.Provider> */}
       {/* <Grid /> */}
       <Test />
+     {/* <Practice /> */}
+      {/* <PopOver /> */}
+      {/* <MainFile /> */}
+      {/* <MainFile /> */}
     </div>
   );
 }
