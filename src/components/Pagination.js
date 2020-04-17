@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 
 import {
   EuiButtonEmpty,
@@ -12,37 +12,40 @@ import {
 
 class Pagination extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       isPopoverOpen: false,
-      activePage: 1,
-      pageCount:5,
-
-    }
+      activePage: 0,
+      pageCount: 5,
+    };
   }
   setIsPopoverOpen = () => {
     this.setState({
-      isPopoverOpen: !this.state.isPopoverOpen
-    })
-  }
-  closePopover = () => this.setIsPopoverOpen(false)
-  goToPage = (pageNumber) => this.setActivePage(pageNumber);
+      isPopoverOpen: !this.state.isPopoverOpen,
+    });
+  };
+  closePopover = () => this.setIsPopoverOpen();
+
   setActivePage = (pageNumber) => {
     this.setState({
-      activePage: pageNumber
-    })
-  }
+      activePage: pageNumber,
+    });
+  };
+
+  goPage = (pageNumber) => {
+    this.setActivePage(pageNumber);
+    const { goToPage } = this.props;
+    goToPage(pageNumber);
+  };
+
   changePageSize = (param) => {
+    // console.log("###########################",param)
+    this.props.pageSize(param);
+    this.setActivePage(param);
+    this.closePopover();
+  };
 
-    console.log("###########################",param)
-    const z = this.props.pageSize(param)
-    console.log("&&&&&&&&",z)
-    this.setActivePage(param)
-    this.closePopover()
-
-  }
-  
   render() {
     // console.log("####",this.props.dataLength)
     const button = (
@@ -61,37 +64,42 @@ class Pagination extends Component {
       <EuiContextMenuItem
         key="2 rows"
         icon="empty"
-        onClick={this.changePageSize.bind(this, 2)}
+        onClick={() => {
+          this.changePageSize(2);
+        }}
       >
         2 rows
-    </EuiContextMenuItem>,
+      </EuiContextMenuItem>,
       <EuiContextMenuItem
         key="4 rows"
         icon="empty"
-        onClick={this.changePageSize.bind(this, 4)}
-
+        onClick={() => {
+          this.changePageSize(4);
+        }}
       >
         4 rows
-    </EuiContextMenuItem>,
+      </EuiContextMenuItem>,
       <EuiContextMenuItem
         key="6 rows"
         icon="check"
-        onClick={this.changePageSize.bind(this, 6)}
-
+        onClick={() => {
+          this.changePageSize(6);
+        }}
       >
         6 rows
-    </EuiContextMenuItem>,
+      </EuiContextMenuItem>,
       <EuiContextMenuItem
         key="8 rows"
         icon="empty"
-        onClick={this.changePageSize.bind(this, 8)}
-
+        onClick={() => {
+          this.changePageSize(8);
+        }}
       >
         8 rows
-    </EuiContextMenuItem>,
+      </EuiContextMenuItem>,
     ];
 
-
+    console.log("@@", this.props.pageCount);
     return (
       <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
         <EuiFlexItem grow={false}>
@@ -107,9 +115,10 @@ class Pagination extends Component {
 
         <EuiFlexItem grow={false}>
           <EuiPagination
+            // pageCount={this.props.pageCount}
             pageCount={this.props.sizePage}
             activePage={this.state.activePage}
-            onPageClick={this.goToPage}
+            onPageClick={this.goPage}
           />
         </EuiFlexItem>
       </EuiFlexGroup>

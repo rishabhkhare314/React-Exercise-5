@@ -56,9 +56,9 @@
   background-color: #dfdfff !important;
 }
 
-.ag-column-hover {
+/* .ag-column-hover {
   background-color: #dfffdf;
-}
+} */
 /* #root{
   background-color:black;
 } */
@@ -79,12 +79,15 @@ input[type="text"]:focus {
   border: 3px solid #555;
   text-align: center;
 }
-.icons{
+.icons {
   font-size: 150px;
   margin: 10px;
   padding: 20px;
 }
-.table{
+.table {
   text-align: center;
 }
-
+.gear {
+  width: 24px;
+  height: 24px;
+}
