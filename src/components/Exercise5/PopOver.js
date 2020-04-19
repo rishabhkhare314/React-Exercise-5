@@ -1,11 +1,9 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import {
-  EuiButton,
-  EuiFormRow,
+  
+
   EuiPopover,
   EuiSpacer,
-  EuiIcon,
-  EuiSwitch,
   EuiButtonToggle,
 } from "@elastic/eui";
 import { EuiButtonIcon } from "@elastic/eui";
@@ -16,7 +14,8 @@ class PopOver extends Component {
 
     this.state = {
       isPopoverOpen: false,
-      visiblityName: true,
+      visiblityFirstName: true,
+      visiblityLastName: true,
       visiblityBranch: true,
       visiblityRollNo: true,
       visiblitySemester: true,
@@ -35,34 +34,24 @@ class PopOver extends Component {
     });
   };
 
-  hideRollno = () => {
-    console.log("hide rolll no");
-  };
 
-  hideName = (e) => {
+    showHideStatus = (e) => {
     this.setState({
       visiblityName: e.target.checked,
-    });
+    })
   };
-  hideBranch = (e) => {
-    this.setState({
-      visiblityBranch: e.target.checked,
-    });
-  };
-  hideRollNo = (e) => {
-    this.setState({
-      visiblityRollNo: e.target.checked,
-    });
-  };
-  hideSemester = (e) => {
-    this.setState({
-      visiblitySemester: e.target.checked,
-    });
-  };
+
+    changeStatus = (e,status) => {
+      this.setState({
+        [e] : !status
+      })
+    }
+  
   render() {
     // console.log("valuesss",props.column)
     const button = (
       <EuiButtonIcon
+      size="m"
         iconType="gear"
         iconSide="right"
         gutterSize="l"
@@ -80,10 +69,18 @@ class PopOver extends Component {
         closePopover={this.closePopover}
       >
         <EuiButtonToggle
-          label="Name"
-          iconType={this.state.visiblityName ? "eye" : "eyeClosed"}
-          onChange={this.hideName}
-          isSelected={this.state.visiblityName}
+          label="First Name"
+          iconType={this.state.visiblityFirstName ? "eye" : "eyeClosed"}
+          onChange={(e) => this.props.showHide(e,'firstName','visiblityFirstName')}
+          // isSelected={this.state.visiblityName}
+          isEmpty
+        />
+        <EuiSpacer />
+        <EuiButtonToggle
+          label="Last Name"
+          iconType={this.state.visiblityLastName ? "eye" : "eyeClosed"}
+          onChange={(e) => this.props.showHide(e,'lastName','visiblityLastName')}
+          // isSelected={this.state.visiblityName}
           isEmpty
         />
 
@@ -91,25 +88,24 @@ class PopOver extends Component {
         <EuiButtonToggle
           label="Branch"
           iconType={this.state.visiblityBranch ? "eye" : "eyeClosed"}
-          onChange={this.hideBranch}
-          isSelected={this.state.visiblityBranch}
+          onChange={(e) => this.props.showHide(e,'branch','visiblityBranch')}
+      
           isEmpty
         />
         <EuiSpacer />
         <EuiButtonToggle
           label="Roll no"
           iconType={this.state.visiblityRollNo ? "eye" : "eyeClosed"}
-          onChange={this.hideRollNo}
-          isSelected={this.state.visiblityRollNo}
+          onChange={(e) => this.props.showHide(e,'rollNo','visiblityRollNo')}         
           isEmpty
         />
 
         <EuiSpacer />
         <EuiButtonToggle
-          label="Semster"
+          label="Semester"
           iconType={this.state.visiblitySemester ? "eye" : "eyeClosed"}
-          onChange={this.hideSemester}
-          isSelected={this.state.visiblitySemester}
+          onChange={(e) => this.props.showHide(e,'semester','visiblitySemester')}
+
           isEmpty
         />
         {/* <EuiButton fill>Copy IFRAME code</EuiButton> */}

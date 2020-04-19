@@ -1,22 +1,16 @@
 import React, { Component } from "react";
-// import './App.css';
-
-import {
-  EuiFlexGroup,
-  EuiFlexItem,
-  EuiButtonEmpty,
- 
-} from "@elastic/eui";
+import { EuiFlexGroup } from "@elastic/eui";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
-import "ag-grid-enterprise";
-import PopOver from "./Exercise5/PopOver";
-import Pagination from "./Exercise5/Pagination";
+import PopOver from "./PopOver";
+import Pagination from "./Pagination";
 import { EuiButtonIcon } from "@elastic/eui";
+import ComboBox from "./ComboBox";
+import Filter from "./Filter";
+import Delete from "./Delete";
 
-import ComboBox from "./Exercise5/ComboBox";
-class Test extends Component {
+class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -24,6 +18,7 @@ class Test extends Component {
       hide: true,
       sizePage: 5,
       pageCount: null,
+      totalPages: 0,
       filterField: "",
       updateRowData: null,
       columnDefs: [
@@ -38,6 +33,7 @@ class Test extends Component {
           resizable: true,
           visibleFields: true,
           hidden: false,
+          width: 150,
         },
         {
           headerName: "firstName",
@@ -47,6 +43,7 @@ class Test extends Component {
           resizable: true,
           visibleFields: true,
           hidden: false,
+          width: 200,
         },
         {
           headerName: "lastName",
@@ -54,6 +51,7 @@ class Test extends Component {
           resizable: true,
           visibleFields: true,
           hidden: false,
+          width: 200,
         },
         {
           headerName: "rollNo",
@@ -61,6 +59,7 @@ class Test extends Component {
           filter: true,
           sortable: true,
           resizable: true,
+          width: 200,
         },
         {
           headerName: "branch",
@@ -68,6 +67,7 @@ class Test extends Component {
           filter: true,
           sortable: true,
           resizable: true,
+          width: 150,
         },
         {
           headerName: "semester",
@@ -75,6 +75,7 @@ class Test extends Component {
           filter: true,
           sortable: true,
           resizable: true,
+           width: 150,
         },
         {
           headerName: "Tag Name",
@@ -82,7 +83,7 @@ class Test extends Component {
           filter: true,
           sortable: true,
           resizable: true,
-          width: 400,
+          width: 350,
           cellRendererFramework: function (params) {
             return <ComboBox />;
           },
@@ -91,53 +92,44 @@ class Test extends Component {
           headerName: "Action",
           colId: "edit",
           resizable: true,
-          cellRendererFramework: function (params) {
+          cellRendererFramework:  (params) => {
             return (
-              // <EuiIcon type="trash" className="icons"/>
-              <EuiFlexGroup alignItems="center" gutterSize="s">
-                <EuiButtonIcon
-                  iconType="trash"
-                  className="icons"
-                  onClick={() => this.rowDelete()}
-                />
-                <EuiButtonIcon
-                  iconType="pencil"
-                  className="icons"
-                  onClick={() => this.rowDelete()}
-                />
-              </EuiFlexGroup>
+              <Delete delete={this.rowDelete} /> 
             );
-          }.bind(this),
+          }
         },
       ],
       rowData: null,
     };
-    this.filter = this.filter.bind(this);
+    // this.filter = this.filter.bind(this);
     // this.rowDelete = this.rowDelete.bind(this);
+
+    this.popRef = React.createRef();
   }
 
   componentDidMount() {
-    // fetch("https://rishabhkhare314.github.io/hello/name.json");
     fetch("https://rishabhkhare314.github.io/hello/data.json")
       .then((res) => res.json())
       .then((rowData) => this.setState({ rowData, updateRowData: rowData }))
       .catch((err) => console.log(err));
-    console.log("Did mount", this.state.rowData);
+    // console.log("Did mount", this.state.rowData);
   }
 
   onGridReady = (params) => {
-    console.log("grid readry paramsS");
+    // console.log("grid readry paramsS");
     this.gridApi = params.api;
+    this.columnApi = params.columnApi;
     this.gridApi.paginationSetPageSize(this.state.sizePage);
     this.setState(
       {
         pageCount: this.gridApi.paginationProxy.totalPages,
       },
       () => {
-        console.log("page", this.state.pageCount);
+        // console.log("page", this.state.pageCount);
       }
     );
-    console.log(this.gridApi.paginationProxy.totalPages);
+    this.gridApi.paginationSetPageSize(this.state.sizePage);
+    // console.log(this.gridApi);
   };
 
   onButtonClick = (e) => {
@@ -149,39 +141,45 @@ class Test extends Component {
     alert(`Selected nodes: ${selectedDataStringPresentation}`);
   };
 
+  // ----------- Manage Delete Rows   -----------
   rowDelete = () => {
     const selectedData = this.gridApi.getSelectedRows();
     this.gridApi.updateRowData({ remove: selectedData });
   };
 
-  filter = (e) => {
-    console.log(e.target.value);
-    console.log(this.state.rowData);
-    const filterData = this.state.rowData.filter((element) => {
-      if (element.firstName.search(e.target.value) !== -1) {
-        return element;
-      }
-    });
-    this.setState({
-      updateRowData: filterData,
-    });
-    console.log("Fillllter", this.state.updateRowData);
-  };
+  // ----------- Manage Pagination   -----------
 
   pageSize = (params) => {
-    //  debugger;
+    //  debugger
+    console.log("hello", this.gridApi);
     this.setState({
       sizePage: params,
+      totalPages: this.gridApi.paginationProxy.totalPages,
     });
     this.gridApi.paginationSetPageSize(params);
   };
-  // count = () => {
-  //   goconst length =  this.state.rowData.length
-  // }
 
   goToPage = (params) => {
     this.gridApi.paginationGoToPage(params);
   };
+
+  // -----------  Manage Filter Data  -----------
+
+  filterData = (params) => {
+    // console.log("param############",params)
+    this.setState({
+      updateRowData: params,
+    });
+  };
+
+  // // -----------  Manage PopOver   -----------
+  showHide = (e, fieldName, stateName) => {
+    console.log(e.target.checked);
+    this.change = e.target.checked;
+    this.columnApi.setColumnVisible(fieldName, !this.change);
+    this.popRef.current.changeStatus(stateName, this.change);
+  };
+
   render() {
     return (
       <div
@@ -191,29 +189,14 @@ class Test extends Component {
           width: "100%",
         }}
       >
-        {" "}
-        <button onClick={this.count}>Show @@@@Selected Data</button>
-        <EuiFlexGroup gutterSize="s" alignItems="center">
-          <EuiFlexItem grow={false}>
-            <EuiButtonEmpty
-              color="text"
-              onClick={() => window.alert("Button clicked")}
-            >
-              Text
-            </EuiButtonEmpty>
-          </EuiFlexItem>
-        </EuiFlexGroup>
-        <h1>Exercise 5</h1>
-        <button onClick={this.onButtonClick}>Show Selected Data</button>
-        <input
-          type="text"
-          name="filterField"
-          // value={this.state.filterField}
-          onChange={this.filter}
-          className="search"
-          placeholder="Enter Search here..."
+        <Filter rowData={this.state.rowData} filterData={this.filterData} />
+
+        <PopOver
+          column={this.state.columnDefs}
+          showHide={this.showHide}
+          ref={this.popRef}
         />
-        <PopOver column={this.state.columnDefs} />
+
         <AgGridReact
           pagination={true}
           // paginationAutoPageSize="true"
@@ -222,14 +205,16 @@ class Test extends Component {
           rowData={this.state.updateRowData}
           rowSelection="multiple"
           onGridReady={(e) => this.onGridReady(e)}
-        ></AgGridReact>
+        />
+
         <Pagination
           pageSize={this.pageSize}
           pageCount={this.state.pageCount}
           goToPage={this.goToPage}
           sizePage={this.state.sizePage}
-          length={this.state.count}
+          totalPages={this.state.totalPages}
         />
+
         <button onClick={this.onButtonClick} className="btn btn-primary">
           Show Selected Data
         </button>
@@ -238,4 +223,4 @@ class Test extends Component {
   }
 }
 
-export default Test;
+export default Main;

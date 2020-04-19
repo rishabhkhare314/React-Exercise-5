@@ -17,14 +17,16 @@ class Pagination extends Component {
     this.state = {
       isPopoverOpen: false,
       activePage: 0,
-      pageCount: 5,
+      pageCount: 4,
     };
+    // console.log("props" ,this.props)
   }
   setIsPopoverOpen = () => {
     this.setState({
       isPopoverOpen: !this.state.isPopoverOpen,
     });
   };
+
   closePopover = () => this.setIsPopoverOpen();
 
   setActivePage = (pageNumber) => {
@@ -34,6 +36,7 @@ class Pagination extends Component {
   };
 
   goPage = (pageNumber) => {
+    console.log("gogogopage", pageNumber);
     this.setActivePage(pageNumber);
     const { goToPage } = this.props;
     goToPage(pageNumber);
@@ -43,11 +46,13 @@ class Pagination extends Component {
     // console.log("###########################",param)
     this.props.pageSize(param);
     this.setActivePage(param);
+    this.goPage(param);
     this.closePopover();
   };
 
   render() {
-    // console.log("####",this.props.dataLength)
+    // console.log("####", this.props.a);
+
     const button = (
       <EuiButtonEmpty
         size="s"
@@ -99,7 +104,6 @@ class Pagination extends Component {
       </EuiContextMenuItem>,
     ];
 
-    console.log("@@", this.props.pageCount);
     return (
       <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
         <EuiFlexItem grow={false}>
@@ -115,8 +119,8 @@ class Pagination extends Component {
 
         <EuiFlexItem grow={false}>
           <EuiPagination
-            // pageCount={this.props.pageCount}
-            pageCount={this.props.sizePage}
+            pageCount={this.props.totalPages}
+            // pageCount={this.props.sizePage}
             activePage={this.state.activePage}
             onPageClick={this.goPage}
           />
