@@ -9,6 +9,7 @@ import { EuiButtonIcon } from "@elastic/eui";
 import ComboBox from "./ComboBox";
 import Filter from "./Filter";
 import Delete from "./Delete";
+import Pop from "./Pop";
 
 class Main extends Component {
   constructor(props) {
@@ -90,6 +91,7 @@ class Main extends Component {
         },
         {
           headerName: "Action",
+          field : "action",
           colId: "edit",
           resizable: true,
           cellRendererFramework:  (params) => {
@@ -118,7 +120,7 @@ class Main extends Component {
   onGridReady = (params) => {
     // console.log("grid readry paramsS");
     this.gridApi = params.api;
-    this.columnApi = params.columnApi;
+    this.gridcolumnApi = params.columnApi;
     this.gridApi.paginationSetPageSize(this.state.sizePage);
     this.setState(
       {
@@ -154,7 +156,6 @@ class Main extends Component {
     console.log("hello", this.gridApi);
     this.setState({
       sizePage: params,
-      totalPages: this.gridApi.paginationProxy.totalPages,
     });
     this.gridApi.paginationSetPageSize(params);
   };
@@ -162,6 +163,13 @@ class Main extends Component {
   goToPage = (params) => {
     this.gridApi.paginationGoToPage(params);
   };
+  changePages = () => {
+    if(this.gridApi != undefined){
+      this.setState({
+        totalPages: this.gridApi.paginationProxy.totalPages,
+      })
+    }
+  }
 
   // -----------  Manage Filter Data  -----------
 
@@ -176,9 +184,15 @@ class Main extends Component {
   showHide = (e, fieldName, stateName) => {
     console.log(e.target.checked);
     this.change = e.target.checked;
-    this.columnApi.setColumnVisible(fieldName, !this.change);
+    this.gridcolumnApi.setColumnVisible(fieldName, !this.change);
     this.popRef.current.changeStatus(stateName, this.change);
   };
+
+  hideShow = (field,boolean) => {
+    console.log(field)
+    console.log(boolean)
+    this.gridcolumnApi.setColumnVisible(field,boolean)
+  }
 
   render() {
     return (
@@ -205,6 +219,7 @@ class Main extends Component {
           rowData={this.state.updateRowData}
           rowSelection="multiple"
           onGridReady={(e) => this.onGridReady(e)}
+          onPaginationChanged ={ this.changePages}
         />
 
         <Pagination
@@ -214,7 +229,7 @@ class Main extends Component {
           sizePage={this.state.sizePage}
           totalPages={this.state.totalPages}
         />
-
+        <Pop column = {this.state.columnDefs} visibility = {this.hideShow} />
         <button onClick={this.onButtonClick} className="btn btn-primary">
           Show Selected Data
         </button>

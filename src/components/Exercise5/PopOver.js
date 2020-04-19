@@ -51,7 +51,6 @@ class PopOver extends Component {
     // console.log("valuesss",props.column)
     const button = (
       <EuiButtonIcon
-      size="m"
         iconType="gear"
         iconSide="right"
         gutterSize="l"
@@ -113,4 +112,11 @@ class PopOver extends Component {
     );
   }
 }
+
+
+
 export default PopOver;
+
+
+
+

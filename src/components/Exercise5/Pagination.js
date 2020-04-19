@@ -35,12 +35,14 @@ class Pagination extends Component {
     });
   };
 
+
   goPage = (pageNumber) => {
-    console.log("gogogopage", pageNumber);
+    // console.log("gogogopage", pageNumber);
     this.setActivePage(pageNumber);
     const { goToPage } = this.props;
     goToPage(pageNumber);
   };
+
 
   changePageSize = (param) => {
     // console.log("###########################",param)
@@ -61,7 +63,7 @@ class Pagination extends Component {
         iconSide="right"
         onClick={this.setIsPopoverOpen}
       >
-        Row per page {this.props.sizePage}
+        Row per page :: {this.props.sizePage}
       </EuiButtonEmpty>
     );
 
@@ -120,6 +122,7 @@ class Pagination extends Component {
         <EuiFlexItem grow={false}>
           <EuiPagination
             pageCount={this.props.totalPages}
+            // pageCount={this.props.totalPages}
             // pageCount={this.props.sizePage}
             activePage={this.state.activePage}
             onPageClick={this.goPage}

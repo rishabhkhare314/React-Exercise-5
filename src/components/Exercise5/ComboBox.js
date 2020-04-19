@@ -16,24 +16,11 @@ const options = [
   {
     label: 'Dione',
   },
-  {
-    label: 'Iapetus',
-  },
-  {
-    label: 'Phoebe',
-  },
-  {
-    label: 'Rhea',
-  },
-  {
-    label:
-      "Pandora is one of Saturn's moons, named for a Titaness of Greek mythology",
-  },
   
 ];
 
 export default () => {
-  const [selectedOptions, setSelected] = useState([options[2], options[4]]);
+  const [selectedOptions, setSelected] = useState([options[2], options[3]]);
 
   const onChange = selectedOptions => {
     setSelected(selectedOptions);

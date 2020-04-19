@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { EuiButtonIcon,EuiFlexGroup } from "@elastic/eui";
 export class Delete extends Component {
   render() {
+    console.log("delete",this.props)
     return (
       <>
         <EuiFlexGroup alignItems="center" gutterSize="s">

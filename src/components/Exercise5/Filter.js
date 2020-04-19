@@ -11,7 +11,7 @@ export class Filter extends Component {
 
   filter = (e) => {
     const filterData = this.props.rowData.filter((element) => {
-      if (element.firstName.search(e.target.value) !== -1) {
+      if (element.firstName.indexOf(e.target.value) !== -1) {
         return element;
       }
     });
