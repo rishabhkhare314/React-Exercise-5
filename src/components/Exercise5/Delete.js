@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { EuiButtonIcon,EuiFlexGroup } from "@elastic/eui";
 export class Delete extends Component {
   render() {
-    console.log("delete",this.props)
     return (
       <>
         <EuiFlexGroup alignItems="center" gutterSize="s">
           <EuiButtonIcon
+          aria-label="deleteButton"
             iconType="trash"
             className="icons"
             onClick={this.props.delete}
           />
-          <EuiButtonIcon iconType="pencil" className="icons" onClick={ () => console.log("edit")} />
+          <EuiButtonIcon aria-label="editButton" iconType="pencil" className="icons" onClick={ () => console.log("edit")} />
         </EuiFlexGroup>
       </>
     );

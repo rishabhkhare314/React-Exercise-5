@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import {
-  
+  EuiToolTip,
 
   EuiPopover,
   EuiSpacer,
@@ -50,6 +50,7 @@ class PopOver extends Component {
   render() {
     // console.log("valuesss",props.column)
     const button = (
+      <EuiToolTip title="Show Hide PopOver Static" >
       <EuiButtonIcon
         iconType="gear"
         iconSide="right"
@@ -57,6 +58,7 @@ class PopOver extends Component {
         onClick={this.onButtonClick}
         className="gear"
       ></EuiButtonIcon>
+      </EuiToolTip>
     );
     // console.log("ROLLLLLLL", this.state.visiblityRollNo);
     return (

@@ -1,20 +1,32 @@
 import React, { Component } from "react";
-import { EuiFlexGroup } from "@elastic/eui";
+// import { EuiFlexGroup } from "@elastic/eui";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import PopOver from "./PopOver";
 import Pagination from "./Pagination";
-import { EuiButtonIcon } from "@elastic/eui";
+// import { EuiButtonIcon } from "@elastic/eui";
 import ComboBox from "./ComboBox";
 import Filter from "./Filter";
 import Delete from "./Delete";
 import Pop from "./Pop";
+import Flyout from "./Flyout";
+// import FlyOut1 from "./FlyOut1";
+import ConboBox1 from "./ConboBox1";
+import { EuiButtonEmpty } from "@elastic/eui";
+import PopOver1 from "./PopOver1";
+// import combo from "./combo";
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isDragColumn: false,
+      rowIndex: "",
+      nodeid: "",
+      tags: [],
+      flyoutCondition: false,
+      selectedData: null,
       show: true,
       hide: true,
       sizePage: 5,
@@ -26,14 +38,14 @@ class Main extends Component {
         {
           headerName: "studentID",
           field: "studentID",
-          checkboxSelection: true,
+          // checkboxSelection: true,
           filter: true,
           sortable: true,
           //rowGroup: true,
           cellClass: "grid-cell-centered",
           resizable: true,
           visibleFields: true,
-          hidden: false,
+          // hidden: false,
           width: 150,
         },
         {
@@ -45,6 +57,13 @@ class Main extends Component {
           visibleFields: true,
           hidden: false,
           width: 200,
+          cellRendererFramework: (params) => {
+            return (
+              <EuiButtonEmpty onClick={this.Flyouts}>
+                {params.value}
+              </EuiButtonEmpty>
+            );
+          },
         },
         {
           headerName: "lastName",
@@ -76,7 +95,7 @@ class Main extends Component {
           filter: true,
           sortable: true,
           resizable: true,
-           width: 150,
+          width: 150,
         },
         {
           headerName: "Tag Name",
@@ -84,22 +103,42 @@ class Main extends Component {
           filter: true,
           sortable: true,
           resizable: true,
-          width: 350,
-          cellRendererFramework: function (params) {
-            return <ComboBox />;
+
+          height: 300,
+          width: 300,
+          // suppressRowClickSelection:true,
+          // suppressCellSelection:true,
+          // suppressMovable: true,
+          // suppressNavigable: true,
+          onDragStop: true,
+          cellRendererFramework: (params) => {
+            return <ConboBox1 comboCallBack={this.comboCallBack} />;
           },
         },
         {
           headerName: "Action",
-          field : "action",
-          colId: "edit",
+          field: "action",
           resizable: true,
-          cellRendererFramework:  (params) => {
-            return (
-              <Delete delete={this.rowDelete} /> 
-            );
-          }
+          suppressRowClickSelection: true,
+          suppressCellSelection: true,
+          // suppressMovable: true,
+          // suppressNavigable: true,
+          cellRendererFramework: (params) => {
+            return <Delete delete={this.rowDelete} />;
+          },
         },
+        // {
+        //   headerName: "",
+        //   field : "flyout",
+        //   // hide: true,
+        //   width:0,
+        //   resizable: true,
+        //   cellRendererFramework:  (params) => {
+        //     return (
+        //       onclick = () => {this.Flyouts()}
+        //     )
+        //   }
+        // },
       ],
       rowData: null,
     };
@@ -163,13 +202,14 @@ class Main extends Component {
   goToPage = (params) => {
     this.gridApi.paginationGoToPage(params);
   };
+
   changePages = () => {
-    if(this.gridApi != undefined){
+    if (this.gridApi != undefined) {
       this.setState({
         totalPages: this.gridApi.paginationProxy.totalPages,
-      })
+      });
     }
-  }
+  };
 
   // -----------  Manage Filter Data  -----------
 
@@ -188,13 +228,94 @@ class Main extends Component {
     this.popRef.current.changeStatus(stateName, this.change);
   };
 
-  hideShow = (field,boolean) => {
-    console.log(field)
-    console.log(boolean)
-    this.gridcolumnApi.setColumnVisible(field,boolean)
-  }
+  hideShow = (fieldValue, boolean) => {
+    // console.log(field);
+    console.log(boolean);
+    this.gridcolumnApi.setColumnVisible(fieldValue, boolean);
+    const columnArr = [...this.state.columnDefs];
+    columnArr.map((f) => {
+      if (f["field"] == fieldValue) {
+        f.abc = boolean;
+      }
+    });
+    this.setState({
+      columnDefs: columnArr,
+    });
+  };
+  ////// Flyout
 
+  Flyouts = () => {
+    const selectedNode = this.gridApi.getSelectedNodes();
+    const index = selectedNode[0].id;
+    this.setState({
+      selectedData: this.gridApi.getSelectedRows(),
+      flyoutCondition: true,
+      rowIndex: index,
+    });
+   
+  };
+
+  closeFlyout = () => {
+    this.setState({
+      flyoutCondition: false,
+      selectedData: [],
+    });
+  };
+  ///
+  comboCallBack = (selectedData) => {
+    const selectedNode =this.gridApi.getSelectedNodes();
+    const index = selectedNode[0].id;
+    let{tags} = this.state
+    tags[index] = selectedData
+    console.log(tags);
+    this.setState({
+      tags: tags,
+    });
+  };
+
+  dragStopped = (e) => {
+    //  console.log("EE",e)
+    //  console.log(this.gridcolumnApi.columnController.columnDefs)
+    const arr = [...this.state.columnDefs];
+    this.gridcolumnApi.columnController.columnDefs.map((column, index) => {
+      //  console.log("colummn",column.field)
+      //  const z = this.gridcolumnApi.getColumn(column.field).visible
+
+      arr[index].abc = this.gridcolumnApi.getColumn(column.field).visible;
+    });
+    // this.setState({
+    //   // isDragColumn: true,
+    //   columnDefs : arr
+    // });
+
+    //  console.log("log",columnArr)
+  };
+
+  dragStarted =(e) => {
+    console.log("drag stared",e)
+  }
   render() {
+
+    let flyoutReturn;
+    if (this.state.flyoutCondition) {
+      let {tags,rowIndex}=this.state
+      if(rowIndex===null){
+        tags=[]
+      }
+      else{
+        tags=tags[rowIndex]||[]
+      }
+
+      flyoutReturn = (
+        <Flyout
+          selectedData={this.state.selectedData}
+          closeFlyout={this.closeFlyout}
+          tags={tags}
+          rowIndex={this.state.rowIndex}
+        />
+      );
+    } 
+
     return (
       <div
         className="ag-theme-material ag-react-container table"
@@ -204,7 +325,8 @@ class Main extends Component {
         }}
       >
         <Filter rowData={this.state.rowData} filterData={this.filterData} />
-
+        {/* <PopOver1 column={this.state.columnDefs}
+          showHide={this.showHide} /> */}
         <PopOver
           column={this.state.columnDefs}
           showHide={this.showHide}
@@ -219,7 +341,15 @@ class Main extends Component {
           rowData={this.state.updateRowData}
           rowSelection="multiple"
           onGridReady={(e) => this.onGridReady(e)}
-          onPaginationChanged ={ this.changePages}
+          onPaginationChanged={this.changePages}
+          // rowClicked = {() => {this.Flyouts()}}
+          onCellClicked={this.Flyouts}
+          // suppressRowClickSelection = "true"
+          suppressCellSelection="true"
+          onDragStopped={this.dragStopped}
+          onDragStarted={this.dragStarted}
+          // onrowDragMove = 
+          enableCellChangeFlash={true}
         />
 
         <Pagination
@@ -229,10 +359,28 @@ class Main extends Component {
           sizePage={this.state.sizePage}
           totalPages={this.state.totalPages}
         />
-        <Pop column = {this.state.columnDefs} visibility = {this.hideShow} />
+        <Pop
+          column={this.state.columnDefs}
+          visibility={this.hideShow}
+          // columnArr={this.columnArr}
+        />
+
         <button onClick={this.onButtonClick} className="btn btn-primary">
           Show Selected Data
         </button>
+
+        {flyoutReturn}
+        {/* 
+        {this.state.isDragColumn ? (
+          <Pop
+            column={this.state.columnDefs}
+            visibility={this.hideShow}
+            columnArr={this.columnArr}
+          />
+        ) : (
+          ""
+        )} */}
+        {/* <FlyOut1 /> */}
       </div>
     );
   }
